@@ -108,7 +108,7 @@ Commands.price = {
       to = 'USD,EUR';
     }
     
-    request.get('https://min-api.cryptocompare.com/data/price?fsym=' + from + '&tsym=' + to)
+    request.get('https://min-api.cryptocompare.com/data/price?fsym=' + from + '&tsyms=' + to)
     .end((err, res) => {
       if (!err && res.status === 200) {
         var result = res.body,
