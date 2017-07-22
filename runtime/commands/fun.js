@@ -90,7 +90,7 @@ Commands.price = {
   name: 'price',
   help: "Current price from coinmarketcap.com !",
   aliases: ['price'],
-  timeout: 10,
+  timeout: 5,
   level: 0,
   fn: function (msg, suffix) {
     var tags = suffix.split(' '),
