@@ -111,10 +111,15 @@ Commands.price = {
     request.get('https://min-api.cryptocompare.com/data/price?fsym=' + from + '&tsym=' + to)
     .end((err, res) => {
       if (!err && res.status === 200) {
-        var result = res.body;
+        var result = res.body,
+            resMSG = '';
+        
         for (var x in result) {
-          msg.channel.sendMessage(from + "/" + x + " = " + result[x]);
+          resMSG += from + "/" + x + " = " + result[x] + "  ";
         }
+        
+        msg.channel.sendMessage(resMSG);
+        
       } else {
         Logger.error(`Got an error: ${err}, status code: ${res.status}`)
       }
