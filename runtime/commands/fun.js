@@ -86,6 +86,42 @@ Commands.kuba = {
   }
 }
 
+Commands.price = {
+  name: 'price',
+  help: "Current price from coinmarketcap.com !",
+  aliases: ['price'],
+  timeout: 10,
+  level: 0,
+  fn: function (msg, suffix) {
+    var tags = suffix.split(' '),
+        from = '',
+        to   = 'BTC,USD,EUR'
+    
+    if (typeof tags[0] === "undefined") {
+      msg.channel.sendMessage("Whoops, not a valid request.");
+      return;
+    }
+    
+    from = tags[0].toUpperCase();
+    
+    if (from === "BTC") {
+      to = 'USD,EUR';
+    }
+    
+    request.get('https://min-api.cryptocompare.com/data/price?fsym=' + from + '&tsym=' + to)
+    .end((err, res) => {
+      if (!err && res.status === 200) {
+        var result = res.body;
+        for (var x in result) {
+          msg.channel.sendMessage(from + "/" + x + " = " + result[x]);
+        }
+      } else {
+        Logger.error(`Got an error: ${err}, status code: ${res.status}`)
+      }
+    })
+  }
+}
+
 Commands.gif = {
   name: 'gif',
   help: "I'll search Giphy for a gif matching your tags.",
