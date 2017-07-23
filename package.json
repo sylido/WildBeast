@@ -54,7 +54,9 @@
     "xml2js": "^0.4.16",
     "youtube-api": "^2.0.2",
     "youtube-dl": "^1.11.1",
-    "ytdl-core": "^0.14.0"
+    "ytdl-core": "^0.14.0",
+    "lodash": "^4.17.4",
+    "numeral": "^2.0.6"
   },
   "devDependencies": {
     "eslint": "^4.1.0",

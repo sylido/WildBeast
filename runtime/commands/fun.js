@@ -1,78 +1,81 @@
-var Commands = []
-var Logger = require('../internal/logger.js').Logger
-var Giphy = require('../giphy.js')
-var Cleverbot = require('cleverbot.io')
-var config = require('../../config.json')
-var request = require('superagent')
-var cleverbot = new Cleverbot(config.api_keys.cleverbot_user, config.api_keys.cleverbot_key)
-var kubaDictionary = [
-  "for long runs its great",
-  "it all depends on market makers",
-  "maybe a bit, but not much",
-  "this is why SL are for",
-  "growing volume and we are close to ATH so should be flash buy on it",
-  "they do not collect so much money during ico so not a lot of coins on market",
-  "yes",
-  "1600-1800 is bottom",
-  "PUT STOP LOSS",
-  "yeah it will",
-  "easy x3 from now",
-  "should be ok",
-  "now it's no point to sell if you not put SL",
-  "there should be a bounce to 0.08",
-  "yeah short at 0.08 is still good",
-  "ETH is gonna go to 0.06",
-  "not at all",
-  "I think LTC will be a winner of that dump",
-  "Btc will go to $1600 and eth will go till $1600 and then maybe $100. During this period of time most alt will follow and will look for floor",
-  "put Sell order at 2310 if you play short on bitmex",
-  "We are going to $1600 in next 6 weeks",
-  "We are down. . close all your positions if you are up to -15% and short bitcoin. We are going to $1600 in next 3 weeks",
-  "anyone short ETH?",
-  "keep calm guys",
-  "ETH and ETC are not brothers anymore",
-  "could fall a bit but not so hard imo",
-  "do not catch falling knife",
-  "you have to choose right time frame",
-  "they need to find new floor",
-  "I almost finish tutorial for bittrex",
-  "I almost finish tutorial for poloniex",
-  "I almost finish tutorial for bitmex",
-  "I almost finish tutorial for gdax",
-  "I almost finish tutorial for coinbase",
-  "strat is way too overhyped",
-  "all our coins will recover shortly",
-  "$5000 till end of the year",
-  "My bet for BTC is $1800 in next weeks",
-  "well its not best time to put more money in this market. With our current funds we can buy some dips but remember about SL. Its good time to short ETH and BTC as well to multiply bitcoins",
-  "with what ? eth ?",
-  "but $150 is possible still",
-  "as well",
-  "it could bounce",
-  "we will see what will happen around $210 zone",
-  "06btc is next support line",
-  "bear market + tons of eth collected during ICOs are cashout now",
-  "if there will be panic sell we are going down",
-  "two days ago",
-  "told ya!",
-  ":fork_and_knife:",
-  "LTC looks ggod",
-  "lets wait for some 30min bars above 198. Its pretty safe buy now also. You can put SL just in case",
-  "not impossible. If there will be panic sell we will have big red dildo",
-  "like less than 200btc",
-  "I think LTC will be one of the biggest winners of that fork",
-  "volume on exchanges are lower",
-  "we are still in bear market",
-  "we are still in bull market",
-  "well I am not sure if its best time to add more money into market",
-  "imo not",
-  "or more",
-  "like 6 month",
-  "but they are long term",
-  "its cool coin. worth to jump in",
-  "our 0.025btc target is still valid",
-  "this year for sure"
-];
+var Commands       = [],
+    Logger         = require('../internal/logger.js').Logger,
+    Giphy          = require('../giphy.js'),
+    Cleverbot      = require('cleverbot.io'),
+    config         = require('../../config.json'),
+    _              = require("lodash"),
+    numeral        = require("numeral"),
+    request        = require('superagent'),
+    cleverbot      = new Cleverbot(config.api_keys.cleverbot_user, config.api_keys.cleverbot_key),
+    kubaDictionary = [
+      "for long runs its great",
+      "it all depends on market makers",
+      "maybe a bit, but not much",
+      "this is why SL are for",
+      "growing volume and we are close to ATH so should be flash buy on it",
+      "they do not collect so much money during ico so not a lot of coins on market",
+      "yes",
+      "1600-1800 is bottom",
+      "PUT STOP LOSS",
+      "yeah it will",
+      "easy x3 from now",
+      "should be ok",
+      "now it's no point to sell if you not put SL",
+      "there should be a bounce to 0.08",
+      "yeah short at 0.08 is still good",
+      "ETH is gonna go to 0.06",
+      "not at all",
+      "I think LTC will be a winner of that dump",
+      "Btc will go to $1600 and eth will go till $1600 and then maybe $100. During this period of time most alt will follow and will look for floor",
+      "put Sell order at 2310 if you play short on bitmex",
+      "We are going to $1600 in next 6 weeks",
+      "We are down. . close all your positions if you are up to -15% and short bitcoin. We are going to $1600 in next 3 weeks",
+      "anyone short ETH?",
+      "keep calm guys",
+      "ETH and ETC are not brothers anymore",
+      "could fall a bit but not so hard imo",
+      "do not catch falling knife",
+      "you have to choose right time frame",
+      "they need to find new floor",
+      "I almost finish tutorial for bittrex",
+      "I almost finish tutorial for poloniex",
+      "I almost finish tutorial for bitmex",
+      "I almost finish tutorial for gdax",
+      "I almost finish tutorial for coinbase",
+      "strat is way too overhyped",
+      "all our coins will recover shortly",
+      "$5000 till end of the year",
+      "My bet for BTC is $1800 in next weeks",
+      "well its not best time to put more money in this market. With our current funds we can buy some dips but remember about SL. Its good time to short ETH and BTC as well to multiply bitcoins",
+      "with what ? eth ?",
+      "but $150 is possible still",
+      "as well",
+      "it could bounce",
+      "we will see what will happen around $210 zone",
+      "06btc is next support line",
+      "bear market + tons of eth collected during ICOs are cashout now",
+      "if there will be panic sell we are going down",
+      "two days ago",
+      "told ya!",
+      ":fork_and_knife:",
+      "LTC looks ggod",
+      "lets wait for some 30min bars above 198. Its pretty safe buy now also. You can put SL just in case",
+      "not impossible. If there will be panic sell we will have big red dildo",
+      "like less than 200btc",
+      "I think LTC will be one of the biggest winners of that fork",
+      "volume on exchanges are lower",
+      "we are still in bear market",
+      "we are still in bull market",
+      "well I am not sure if its best time to add more money into market",
+      "imo not",
+      "or more",
+      "like 6 month",
+      "but they are long term",
+      "its cool coin. worth to jump in",
+      "our 0.025btc target is still valid",
+      "this year for sure"
+    ],
+    cryptos = {"42":"42-coin","611":"sixeleven","808":"808coin","888":"octocoin","1337":"1337","BTC":"bitcoin","ETH":"ethereum","XRP":"ripple","LTC":"litecoin","XEM":"nem","ETC":"ethereum-classic","DASH":"dash","MIOTA":"iota","XMR":"monero","STRAT":"stratis","BTS":"bitshares","EOS":"eos","VERI":"veritaseum","ANS":"antshares","STEEM":"steem","BCC":"bitconnect","ZEC":"zcash","WAVES":"waves","QTUM":"qtum","USDT":"tether","ICN":"iconomi","BCN":"bytecoin-bcn","SC":"siacoin","SNT":"status","GNT":"golem-network-tokens","GNO":"gnosis-gno","XLM":"stellar","REP":"augur","LSK":"lisk","DOGE":"dogecoin","GBYTE":"byteball","FCT":"factom","MAID":"maidsafecoin","GAME":"gamecredits","ARDR":"ardor","DCR":"decred","NXT":"nxt","DGB":"digibyte","KMD":"komodo","BAT":"batcoin","PIVX":"pivx","DGD":"digixdao","MCAP":"mcap","BDL":"bitdeal","PPT":"populous","OMG":"omisego","PAY":"tenx","BNT":"bancor","1ST":"firstblood","MTL":"metal","SNGLS":"singulardtv","MGO":"mobilego","SYS":"syscoin","ANT":"aragon","BTCD":"bitcoindark","ARK":"ark","CVC":"civic","LKK":"lykke","COE":"coeval","UBQ":"ubiq","DCT":"decent","PPC":"peercoin","EMC":"emercoin","XVG":"verge","XAS":"asch","LEO":"leocoin","PART":"particl","NMR":"numeraire","EDG":"edgeless","NXS":"nexus","FUN":"funfair","WINGS":"wings","ROUND":"round","LBC":"library-credit","RDD":"reddcoin","RLC":"rlc","STORJ":"storj","NMC":"namecoin","XCP":"counterparty","BLOCK":"blocknet","MLN":"melon","XAUR":"xaurum","MONA":"monacoin","QRL":"quantum-resistant-ledger","PPY":"peerplays-ppy","HMQ":"humaniq","VSL":"vslice","NLG":"gulden","BAY":"bitbay","VIA":"viacoin","FAIR":"faircoin","SIB":"sibcoin","AMP":"synereo","DICE":"etheroll","CLOAK":"cloakcoin","BLK":"blackcoin","POT":"potcoin","XZC":"zcoin","OMNI":"omni","SKY":"skycoin","VTC":"vertcoin","QAU":"quantum","SOAR":"soarcoin","BURST":"burst","YBC":"ybcoin","MOON":"mooncoin","OBITS":"obits","EDR":"e-dinar-coin","XRL":"rialto","ADT":"adtoken","NAV":"nav-coin","XEL":"elastic","EXP":"expanse","TKN":"tokencard","UNITY":"supernet-unity","IOC":"iocoin","MYST":"mysterium","EAC":"earthcoin","GOLOS":"golos","TRST":"trust","TAAS":"taas","ECOB":"ecobit","GRC":"gridcoin","XDN":"digitalnote","RADS":"radium","FRST":"firstcoin","CRW":"crown","PLBT":"polybius","NXC":"nexium","B@":"bankcoin","NVC":"novacoin","UNY":"unity-ingot","NEOS":"neoscoin","SNM":"sonm","AGRS":"agoras-tokens","DTB":"databits","VOX":"voxels","SLS":"salus","ENRG":"energycoin","IFC":"infinitecoin","CFI":"cofound-it","BASH":"luckchain","SAFEX":"safe-exchange-coin","PTOY":"patientory","ION":"ion","WCT":"waves-community-token","PEPECASH":"pepe-cash","PLU":"pluton","SHIFT":"shift","DAXX":"daxxcoin","WDC":"worldcoin","SAN":"santiment","MUE":"monetaryunit","TIME":"chronobank","GRS":"groestlcoin","NVST":"nvo","GUP":"guppy","CLAM":"clams","QRK":"quark","MUSE":"bitshares-music","BCAP":"bcap","SPR":"spreadcoin","DBIX":"dubaicoin-dbix","ECN":"e-coin","MCO":"monaco","BCY":"bitcrystals","RBY":"rubycoin","MEC":"megacoin","HEAT":"heat-ledger","LMC":"lomocoin","MGC":"gulfcoin","UNO":"unobtanium","NOTE":"dnotes","XPM":"primecoin","FTC":"feathercoin","XBY":"xtrabytes","FLDC":"foldingcoin","BITCNY":"bitcny","VRC":"vericoin","FLO":"florincoin","SWT":"swarm-city","RISE":"rise","XBC":"bitcoin-plus","XCN":"cryptonite","NLC2":"nolimitcoin","NET":"netcoin","DGC":"digitalcoin","VASH":"vpncoin","ETT":"encryptotel","GAM":"gambit","BELA":"belacoin","AEON":"aeon","OK":"okcash","ZEN":"zencash","CHC":"chaincoin","EB3":"eb3-coin","PASC":"pascal-coin","EMC2":"einsteinium","INCNT":"incent","SPHR":"sphere","DMD":"diamond","LUN":"lunyr","ADX":"adex","BITB":"bitbean","COVAL":"circuits-of-value","XVC":"vcash","SLR":"solarcoin","MAX":"maxcoin","ESP":"espers","ZET":"zetacoin","EMV":"ethereum-movie-venture","AUR":"auroracoin","CRB":"creditbit","CADASTRAL":"bitland","BSD":"bitsend","MUSIC":"musicoin","PINK":"pinkcoin","MED":"mediterraneancoin","ZCC":"zccoin","GCR":"global-currency-reserve","BLITZ":"blitzcash","ECC":"eccoin","PZM":"prizm","RIC":"riecoin","SKIN":"skincoin","BOST":"boostcoin","APX":"apx","GLD":"goldcoin","CURE":"curecoin","BQX":"bitquence","WGR":"wagerr","DIME":"dimecoin","SEQ":"sequence","ICOO":"ico-openledger","NAUT":"nautiluscoin","ARC":"arcade-token","XST":"stealthcoin","SRC":"securecoin","SBD":"steem-dollars","ABY":"applebyte","DEX":"instantdex","XRB":"raiblocks","ANC":"antcoin","XMY":"myriad","ATMS":"atmos","BITUSD":"bitusd","ZCL":"zclassic","DAR":"darcrus","DYN":"dynamic","PUT":"putincoin","MINT":"mintcoin","SYNX":"syndicate","XSPEC":"spectrecoin","VSM":"voise","TAG":"tagcoin","SNRG":"synergy","XBB":"boolberry","ICASH":"icash","ZENI":"zennies","BTA":"bata","WBB":"wild-beast-block","ZEIT":"zeitcoin","KORE":"korecoin","PDC":"project-decorum","ZRC":"zrcoin","ADC":"audiocoin","INSN":"insanecoin-insn","JNS":"janus","DOPE":"dopecoin","DOT":"dotcoin","STA":"starta","MNE":"minereum","EXCL":"exclusivecoin","TRIG":"triggers","RLT":"roulettetoken","BRX":"breakout-stake","BTM":"bitmark","QWARK":"qwark","CREA":"creativecoin","VRM":"veriumreserve","TIPS":"fedoracoin","TX":"transfercoin","BRK":"breakout","HUSH":"hush","SWIFT":"bitswift","RNS":"renos","CRAVE":"crave","INPAY":"inpay","LGD":"legends-room","HUC":"huntercoin","FST":"fastcoin","CANN":"cannabiscoin","NTRN":"neutron","POSW":"posw-coin","CCRB":"cryptocarbon","2GIVE":"2give","ERC":"europecoin","TIX":"tickets","ADL":"adelphoi","THC":"hempcoin","EQT":"equitrader","ADZ":"adzcoin","PTC":"pesetacoin","EGC":"evergreencoin","TRC":"terracoin","VTR":"vtorrent","NKA":"incakoin","FNC":"fincoin","XWC":"whitecoin","BLOCKPAY":"blockpay","VISIO":"visio","GEO":"geocoin","KOBO":"kobocoin","PEPE":"memetic","START":"startcoin","TRUST":"trustplus","ICE":"idice","TKS":"tokes","V":"version","FUCK":"fucktoken","HYP":"hyperstake","NSR":"nushares","XTO":"tao","HKG":"hacker-gold","MER":"mercury","XTC":"tilecoin","FUNC":"funcoin","XVP":"virtacoinplus","EFL":"e-gulden","HTC":"hitcoin","SXC":"sexcoin","NETKO":"netko","PKB":"parkbyte","E4ROW":"ether-for-the-rest-of-the-world","SUPER":"supercoin","HTML5":"htmlcoin","OTX":"octanox","FIMK":"fimkrypto","SPRTS":"sprouts","PING":"cryptoping","EL":"elcoin-el","CPC":"capricoin","DRACO":"dt-token","PND":"pandacoin-pnd","RBX":"ripto-bux","UNB":"unbreakablecoin","WGO":"wavesgo","GLC":"globalcoin","XMG":"magi","LDOGE":"litedoge","BTSR":"btsr","BLU":"bluecoin","CDN":"canada-ecoin","CBX":"cryptogenic-bullion","PROC":"procurrency","MRT":"miners-reward-token","MOIN":"moin","HERO":"sovereign-hero","RAIN":"condensate","ALT":"altcoin-alt","LOG":"woodcoin","XHI":"hicoin","BYC":"bytecent","SMLY":"smileycoin","UIS":"unitus","CFT":"cryptoforecast","SMC":"smartcoin","CNT":"centurion","KRB":"karbowanec","PAK":"pakcoin","FJC":"fujicoin","DSH":"dashcoin","INFX":"influxcoin","FOOT":"footy-cash","ZER":"zero","GCN":"gcoin","CV2":"colossuscoin-v2","BTX":"bitcointx","USNBT":"nubits","NOBL":"noblecoin","ITI":"iticoin","BITS":"bitstar","HNC":"huncoin","DNR":"denarius-dnr","UNIFY":"unify","TOKEN":"swaptoken","POST":"postcoin","DCY":"dinastycoin","BTB":"bitbar","YOC":"yocoin","MZC":"mazacoin","EMD":"emerald","PIGGY":"piggycoin","8BIT":"8bit","DEM":"deutsche-emark","ZOI":"zoin","DP":"digitalprice","CNC":"chncoin","XP":"xp","PXC":"phoenixcoin","FRN":"francs","SUMO":"sumokoin","4CHN":"chancoin","BXT":"bittokens","XVS":"vsync","ENT":"eternity","SCORE":"scorecoin","FLT":"fluttercoin","AGLC":"agrolifecoin","UFO":"ufo-coin","LTB":"litebar","BERN":"berncash","XJO":"joulecoin","RBIES":"rubies","NYAN":"nyancoin","BUCKS":"swagbucks","VUC":"virta-unique-coin","LINX":"linx","TEK":"tekcoin","XCT":"c-bit","NEWB":"newbium","BITBTC":"bitbtc","C2":"coin2-1","UNITS":"gameunits","CJ":"cryptojacks","KURT":"kurrent","PUTIC":"putin-classic","DUO":"parallelcoin","MSCN":"master-swiscoin","CAT":"catcoin","XRA":"ratecoin","ADCN":"asiadigicoin","MI":"xiaomicoin","PIE":"piecoin","KAYI":"kayi","DAS":"das","ASAFE2":"allsafe","GLT":"globaltoken","PXI":"prime-xi","BITSILVER":"bitsilver","SLG":"sterlingcoin","TSE":"tattoocoin","BITGOLD":"bitgold","ATOM":"atomic-coin","CXT":"coinonat","ECO":"ecocoin","TOR":"torcoin-tor","XLR":"solaris","GCC":"guccionecoin","KUSH":"kushcoin","CNNC":"cannation","KLC":"kilocoin","RBT":"rimbit","REE":"reecoin","STV":"sativacoin","BITEUR":"biteur","MOJO":"mojocoin","VRS":"veros","GPU":"gpu-coin","ICOB":"icobid","NRO":"neuro","XPD":"petrodollar","MNC":"mantracoin","XCO":"x-coin","ERY":"eryllium","AMS":"amsterdamcoin","PULSE":"pulse","FRC":"freicoin","$$$":"money","KNC":"kingn-coin","HONEY":"honey","UET":"useless-ethereum-token","DIBC":"dibcoin","ARG":"argentum","COAL":"bitcoal","CREVA":"crevacoin","LBTC":"litebitcoin","FLAX":"flaxscript","CONX":"concoin","BRIA":"briacoin","1CR":"1credit","SOCC":"socialcoin-socc","FUZZ":"fuzzballs","BENJI":"benjirolls","LVPS":"levoplus","MTLMC3":"metal-music-coin","ARGUS":"argus","WEX":"wexcoin","EBT":"ebittree-coin","420G":"ganjacoin","BOAT":"doubloon","ELS":"elysium","XRC":"rawcoin2","RUP":"rupee","JINN":"jinn","BPC":"bitpark-coin","INSANE":"insanecoin","CNO":"coin","XC":"xcurrency","AC":"asiacoin","IXC":"ixcoin","PANGEA":"pangea-poker","CARBON":"carboncoin","BITZ":"bitz","USC":"ultimate-secure-cash","YASH":"yashcoin","CASINO":"casino","NYC":"newyorkcoin","RC":"russiacoin","TALK":"btctalkcoin","I0C":"i0coin","FUND":"cryptofund","ORB":"orbitcoin","CAGE":"cagecoin","SDC":"shadowcash","HODL":"hodlcoin","TES":"teslacoin","GAIA":"gaia","TROLL":"trollcoin","CRYPT":"cryptcoin","METAL":"metalcoin","MBRS":"embers","TRI":"triangles","BRIT":"britcoin","AU":"aurumcoin","FCN":"fantomcoin","GRE":"greencoin","GOOD":"good-karma","FLY":"flycoin","UTC":"ultracoin","FC2":"fuelcoin","DVC":"devcoin","TRUMP":"trumpcoin","BUN":"bunnycoin","SHORTY":"shorty","FUNK":"the-cypherfunks","HBN":"hobonickels","HPC":"happycoin","MNM":"mineum","LTBC":"ltbcoin","AMBER":"ambercoin","RAREPEPEP":"rare-pepe-party","DWC":"deepwebcash","PASL":"pascal-lite","GTC":"global-tour-coin","XGR":"goldreserve","KIC":"kibicoin","Q2C":"qubitcoin","PSB":"pesobit","UNIC":"unicoin","VIDZ":"purevidz","CCN":"cannacoin","ELE":"elementrem","TIT":"titcoin","MAC":"machinecoin","OHM":"ohm-wallet","ARI":"aricoin","XPY":"paycoin2","BSTY":"globalboost-y","J":"joincoin","STS":"stress","BTD":"bitcloud","CAP":"bottlecaps","LANA":"lanacoin","GB":"goldblocks","CHESS":"chesscoin","TRK":"truckcoin","UNIT":"universal-currency","SWING":"swing","BTCS":"bitcoin-scrypt","CORG":"corgicoin","LOT":"lottocoin","TSTR":"tristar-coin","BLC":"blakecoin","VLT":"veltor","MCRN":"macron","BTCR":"bitcurrency","ECA":"electra","MTM":"mtmgaming","MXT":"martexcoin","PRC":"prcoin","ARCO":"aquariuscoin","XRE":"revolvercoin","CUBE":"digicube","SPACE":"spacecoin","MARS":"marscoin","EUC":"eurocoin","TGC":"tigercoin","GUN":"guncoin","BOLI":"bolivarcoin","JIN":"jin-coin","KED":"darsek","QTL":"quatloo","HMP":"hempcoin-hmp","MAR":"marijuanacoin","PR":"prototanium","PHS":"philosopher-stones","IMS":"independent-money-system","CSC":"casinocoin","RED":"redcoin","PIP":"pipcoin","YAC":"yacoin","EVO":"evotion","CPN":"compucoin","CRX":"chronos","QCN":"quazarcoin","VC":"virtualcoin","DLC":"dollarcoin","SPT":"spots","HAL":"halcyon","VAL":"valorbit","WORM":"healthywormcoin","WAY":"wayguide","GP":"goldpay-coin","BUMBA":"bumbacoin","CON":"paycon","BIGUP":"bigup","BTPL":"bitcoin-planet","SPEX":"sproutsextreme","VTA":"virtacoin","EVIL":"evil-coin","UNI":"universe","ZNY":"bitzeny","TTC":"tittiecoin","PHO":"photon","GRT":"grantcoin","VEC2":"vector","CYP":"cypher","CACH":"cachecoin","SOON":"sooncoin","DRM":"dreamcoin","ACOIN":"acoin","WYV":"wyvern","GAP":"gapcoin","BIP":"bipcoin","CHAO":"23-skidoo","ATX":"artex-coin","VLTC":"vault-coin","DIX":"dix-asset","NEVA":"nevacoin","POP":"popularcoin","PX":"px","FRK":"franko","BCF":"bitcoinfast","WMC":"wmcoin","B3":"b3coin","UNIBURST":"uniburst","BLRY":"billarycoin","DRS":"digital-rupees","DBTC":"debitcoin","TAJ":"tajcoin","MAD":"satoshimadness","ALL":"allion","HXX":"hexx","BOB":"dobbscoin","SONG":"songcoin","FIRE":"firecoin","JWL":"jewels","FLVR":"flavorcoin","XCRE":"creatio","BVC":"beavercoin","SFC":"solarflarecoin","RPC":"ronpaulcoin","GBC":"gbcgoldcoin","ISL":"islacoin","MEOW":"kittehcoin","BQC":"bbqcoin","AUM":"alexium","PONZI":"ponzicoin","BNX":"bnrtxcoin","CMT":"comet","LUNA":"luna-coin","ACP":"anarchistsprime","DOLLAR":"dollar-online","MND":"mindcoin","CTO":"crypto","ARB":"arbit","URC":"unrealcoin","SCRT":"secretcoin","MST":"mustangcoin","ZUR":"zurcoin","ZMC":"zetamicron","ANTI":"antibitcoin","XBTS":"beatcoin","URO":"uro","ZYD":"zayedcoin","XPTX":"platinumbar","PLNC":"plncoin","VIP":"vip-tokens","CESC":"cryptoescudo","CASH":"cashcoin","IMX":"impact","RIDE":"ride-my-car","OFF":"cthulhu-offerings","LTCR":"litecred","DES":"destiny","BLZ":"blazecoin","MAY":"theresa-may-coin","LEA":"leacoin","ORLY":"orlycoin","XBTC21":"bitcoin-21","MILO":"milocoin","CWXT":"cryptoworldx-token","SH":"shilling","PRX":"printerium","SLING":"sling","OCEAN":"burstocean","AMMO":"ammo-rewards","GBT":"gamebet-coin","BIOS":"bios-crypto","STEPS":"steps","G3N":"genstake","U":"ucoin","BTQ":"bitquark","GEERT":"geertcoin","XOC":"xonecoin","SLEVIN":"slevin","CAB":"cabbage","HVCO":"high-voltage","WARP":"warp","SCS":"speedcash","HIRO":"hirocoin","BSTAR":"blackstar","ICON":"iconic","IMPS":"impulsecoin","TAGR":"tagrcoin","BSC":"bowscoin","ALTC":"antilitecoin","QBK":"qibuck-asset","OS76":"osmiumcoin","DLISK":"dappster","CCM100":"ccminer","EGO":"ego","DPAY":"dpay","ZNE":"zonecoin","IMPCH":"impeachcoin","JOBS":"jobscoin","VOLT":"bitvolt","REV":"revenu","LIR":"letitride","CRT":"crtcoin","IBANK":"ibank","SDP":"sydpak","VPRC":"vaperscoin","ONX":"onix","JIO":"jio-token","ABN":"abncoin","LEX":"lex4all","PEX":"posex","SANDG":"save-and-gain","MGM":"magnum","ETB":"ethbits","ENV":"environ","CF":"californium","BIOB":"biobar","NODC":"nodecoin","XNG":"enigma","P7C":"p7coin","DRAGON":"btcdragon","PIZZA":"pizzacoin","FDC":"future-digital-currency","SLFI":"selfiecoin","XEN":"xenixcoin","DGCS":"digital-credits","PWR":"powercoin","ZHS":"zcashshare","MUG":"mikethemug","DMB":"digital-money-bits","CALC":"caliphcoin","GXS":"gxshares","ICO":"ico","HLB":"lepaoquan","DMC":"dynamiccoin","FRGC":"fargocoin","ETP":"metaverse","ATCC":"atc-coin","SJCX":"storjcoin-x","GYC":"gycoin","BGC":"bagcoin","AXF":"axfunds","XID":"international-diamond","OCN":"operacoin","BITOK":"bitok","EBST":"eboostcoin","PCS":"pabyosi-coin-special","LINDA":"linda","FAL":"falcoin","RSGP":"rsgpcoin","MALC":"malcoin","DTF":"digitalfund","CLUB":"clubcoin","SHELL":"shellcoin","DHG":"dhg","EDRC":"edrcoin","MG":"mind-gene","GBG":"golos-gold","WA":"wa-space","SKULL":"pirate-blocks","KASHH":"kashhcoin","DEUS":"deuscoin","VOYA":"voyacoin","IOP":"internet-of-people","ZBC":"zilbercoin","LNK":"link-platform","BTU":"bitcoin-unlimited","TERA":"teracoin","BET":"betacoin","OPAL":"opal","APC":"alpacoin","TYCHO":"tychocoin","EMP":"emoneypower","FLASH":"flash","PRIMU":"primulon","RUBIT":"rublebit","GUC":"goldunioncoin","CVCOIN":"cvcoin","ACES":"aces","LEPEN":"lepen","SKR":"sakuracoin","MARX":"marxcoin","PAC":"paccoin","FEDS":"fedorashare","UNRC":"universalroyalcoin","THS":"techshares","BIT":"first-bitcoin","SHND":"stronghands","FAZZ":"fazzcoin","TCOIN":"t-coin","IFLT":"inflationcoin","XOT":"internet-of-things","GARY":"president-johnson","PRES":"president-trump","TESLA":"teslacoilcoin","DON":"donationcoin","UR":"ur","AE":"aeternity","DASHS":"dashs","ABC":"alphabitcoinfund","GAY":"gaycoin","LDCN":"landcoin","HILL":"president-clinton","BURN":"president-sanders","NTCC":"neptune-classic","SMART":"smartcash","XQN":"quotient","COUPE":"coupecoin","TURBO":"turbocoin","RBBT":"rabbitcoin","STEX":"stex","AIB":"advanced-internet-blocks","SNC":"suncontract","WOMEN":"women","FONZ":"fonziecoin","XVE":"the-vegan-initiative","SHA":"shacoin","ROYAL":"royalcoin","BTWTY":"bit20","JET":"jetcoin","TRADE2":"tradecoin-v2","YOG":"yogold","SLM":"slimcoin","IRL":"irishcoin","MONEY":"moneycoin","XLC":"leviarcoin","QORA":"qora","ACN":"avoncoin","TELL":"tellurion","BEST":"bestchain","AMIS":"amis","TER":"terranova","AXIOM":"axiom","9COIN":"9coin","HCC":"happy-creator-coin","MBL":"mobilecash","BTG":"bitgem","ZSE":"zsecoin","YES":"yescoin","LAZ":"lazaruscoin","BRO":"bitradio","NANOX":"project-x","MIU":"miyucoin","FRWC":"frankywillcoin","EFYT":"ergo","GMB":"gambleo","HALLO":"halloween-coin","WOW":"wowcoin","FXE":"futurexe","SOUL":"soulcoin","GPL":"gold-pressed-latinum","MMXVI":"mmxvi","FFC":"fireflycoin","POKE":"pokecoin","EGG":"eggcoin","CHEAP":"cheapcoin","UNC":"uncoin","PI":"picoin","MOTO":"motocoin","BXC":"bitcedi","CBD":"cbd-crystals","TODAY":"todaycoin","RHFC":"rhfcoin","TYC":"tyrocoin","LTH":"lathaan","AV":"avatarcoin","TIC":"true-investment-coin","ELC":"elacoin","BLAZR":"blazercoin","FUTC":"futcoin","GBRC":"global-business-revolution","LKC":"linkedcoin","TOPAZ":"topaz","BUK":"cryptobuck","RMC":"remicoin","IVZ":"invisiblecoin","CC":"cybercoin","QRZ":"quartz-qrz","SKC":"skeincoin","RYCN":"royalcoin-2","PDG":"pinkdog","QBT":"cubits","PRM":"prismchain","DCRE":"deltacredits","TROPTIONS":"troptions","WSX":"wearesatoshi","SFE":"safecoin","MONETA":"moneta2","OPES":"opescoin","XSTC":"safe-trade-coin","CYC":"cycling-coin","SAK":"sharkcoin","ANI":"animecoin","VTY":"victoriouscoin","RCN":"rcoin","X2":"x2","VGC":"vegascoin","TLE":"tattoocoin-limited","IEC":"ivugeocoin","XDE2":"xde-ii","GMX":"goldmaxcoin","DISK":"darklisk","TEAM":"teamup","XBG":"btcgold","GML":"gameleaguecoin","MRC":"microcoin","XAU":"xaucoin","CLINT":"clinton","BAC":"bitalphacoin","WEC":"wowecoin","STRB":"superturbostake","GOLF":"golfcoin","PCN":"peepcoin","RICHX":"richcoin","PSY":"psilocybin","DBG":"digital-bullion-gold","GAIN":"ugain","QBC":"quebecoin","MAVRO":"mavro","KARMA":"karmacoin","OCOW":"ocow","TRICK":"trickycoin","OP":"operand","NBIT":"netbit","PAYP":"paypeer","CME":"cashme","NBE":"bitcentavo","ASC":"asiccoin","SYNC":"sync","BGR":"bongger","TP1":"kolschcoin","DUB":"dubstep","DFT":"draftcoin","BRAIN":"braincoin","TCR":"thecreed","ELCO":"elcoin","SPORT":"sportscoin","OMC":"omicron","ZENGOLD":"zengold","WARRANT":"warrant","ANTX":"antimatter","SNAKE":"snakeeyes"};
 
 Commands.kuba = {
   name: 'kuba',
@@ -82,9 +85,9 @@ Commands.kuba = {
   timeout: 5,
   level: 0,
   fn: function (msg) {
-    msg.channel.sendMessage("kuba: " + kubaDictionary[Math.floor((Math.random() * (kubaDictionary.length - 1) ))])
+    msg.channel.sendMessage("kuba: " + kubaDictionary[Math.floor((Math.random() * (kubaDictionary.length - 1) ))]);
   }
-}
+};
 
 Commands.price = {
   name: 'price',
@@ -94,38 +97,41 @@ Commands.price = {
   level: 0,
   fn: function (msg, suffix) {
     var tags = suffix.split(' '),
-        from = '',
-        to   = 'BTC,USD,EUR'
-    
-    if (typeof tags[0] === "undefined") {
+        fr   = '',
+        from = '';
+
+    if (typeof tags[0] === "undefined" || tags[0] === '') {
       msg.channel.sendMessage("Whoops, not a valid request.");
       return;
     }
-    
-    from = tags[0].toUpperCase();
-    
-    if (from === "BTC") {
-      to = 'USD,EUR';
-    }
-    
-    request.get('https://min-api.cryptocompare.com/data/price?fsym=' + from + '&tsyms=' + to)
+
+    fr   = tags[0].toUpperCase();
+    from = cryptos[fr];
+
+    request.get('https://api.coinmarketcap.com/v1/ticker/' + from)
     .end((err, res) => {
       if (!err && res.status === 200) {
-        var result = res.body,
-            resMSG = '';
-        
-        for (var x in result) {
-          resMSG += from + "/" + x + " = " + result[x] + "  ";
+        var r = _.head(res.body),
+            p = '';
+
+        if (from !== "bitcoin") {
+          p = r.price_btc + " BTC";
         }
-        
-        msg.channel.sendMessage(resMSG);
-        
+
+        r = _.startCase(from) +
+            "\n$" + r.price_usd + "    " + p +
+            "\n     7D     /     1D     /    1H" +
+            "\n" + r.percent_change_7d  + "% / " + r.percent_change_24h + "% / " + r.percent_change_1h  + "%" +
+            "\nRank " + r.rank + "    Volume " + numeral(r["24h_volume_usd"]).format("$0.00a");
+
+        msg.channel.sendMessage(r);
+
       } else {
-        Logger.error(`Got an error: ${err}, status code: ${res.status}`)
+        Logger.error(`Got an error: ${err}, status code: ${res.status}`);
       }
-    })
+    });
   }
-}
+};
 
 Commands.gif = {
   name: 'gif',
@@ -134,16 +140,16 @@ Commands.gif = {
   timeout: 10,
   level: 0,
   fn: function (msg, suffix) {
-    var tags = suffix.split(' ')
+    var tags = suffix.split(' ');
     Giphy.get_gif(tags, function (id) {
       if (typeof id !== 'undefined') {
-        msg.reply('http://media.giphy.com/media/' + id + '/giphy.gif [Tags: ' + tags + ']')
+        msg.reply('http://media.giphy.com/media/' + id + '/giphy.gif [Tags: ' + tags + ']');
       } else {
-        msg.reply('Sorry! Invalid tags, try something else. For example something that exists [Tags: ' + tags + ']')
+        msg.reply('Sorry! Invalid tags, try something else. For example something that exists [Tags: ' + tags + ']');
       }
-    })
+    });
   }
-}
+};
 
 Commands.rip = {
   name: 'rip',
@@ -152,28 +158,29 @@ Commands.rip = {
   level: 0,
   timeout: 10,
   fn: function (msg, suffix, bot) {
-    var qs = require('querystring')
-    var resolve = []
-    var skipped = false
+    var qs      = require('querystring'),
+        resolve = [],
+        skipped = false;
+
     if (msg.mentions.length > 0) {
       for (var m of msg.mentions) {
         if (m.id !== bot.User.id) {
           if (resolve[0] === undefined) {
-            resolve[0] = m.username
+            resolve[0] = m.username;
           } else {
-            resolve[0] += ' and ' + m.username
+            resolve[0] += ' and ' + m.username;
           }
         } else {
-          skipped = true
+          skipped = true;
         }
       }
     } else if (suffix) {
-      resolve[0] = suffix
+      resolve[0] = suffix;
     }
     if (skipped === true && msg.mentions.length === 1 && suffix) {
-      resolve[0] = suffix
+      resolve[0] = suffix;
     }
-    msg.channel.sendMessage('http://ripme.xyz/' + qs.stringify(resolve).substr(2))
+    msg.channel.sendMessage('http://ripme.xyz/' + qs.stringify(resolve).substr(2));
   }
 }
 
