@@ -79,13 +79,13 @@ var Commands       = [],
 
 Commands.kuba = {
   name: 'kuba',
-  aliases: ['kubafacts', 'askkuba', 'askuba', 'whereiskuba', 'dzwilldo'],
+  aliases: ['kubafacts', 'askkuba', 'askuba', 'whereiskuba', 'dzwilldo', 'ciberbasedgod'],
   help: "COINVESTMENT IS THE BEST - SUBSCRIBE NOW only 0.01 BTC per month !",
   noDM: true, // Ratelimits Ratelimits Ratelimits Ratelimits
-  timeout: 5,
+  timeout: 10,
   level: 0,
   fn: function (msg) {
-    msg.channel.sendMessage("kuba: " + kubaDictionary[Math.floor((Math.random() * (kubaDictionary.length - 1) ))]);
+    msg.channel.sendMessage("*DEAD* kuba *RIP*: " + kubaDictionary[_.random(0, kubaDictionary.length - 1)]);
   }
 };
 
