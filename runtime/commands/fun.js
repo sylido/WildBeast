@@ -105,7 +105,7 @@ Commands.price = {
   timeout: 5,
   level: 0,
   fn: function (msg, suffix) {
-    var tags = suffix.split(' '),
+    var tags = suffix.split(/\s+/),
         fr   = '',
         from = '';
 
