@@ -142,13 +142,25 @@ Commands.price = {
   }
 };
 
+Commands['news'] = {
+  name    : 'news',
+  help    : "I submit news !",
+  aliases : ['news', 'tothemoon'],
+  noDM    : true,
+  timeout : 1,
+  level   : 4,
+  fn      : function (msg, suffix) {
+    msg.channel.sendMessage('', false, JSON.parse(suffix));
+  }
+};
+
 Commands.gif = {
-  name: 'gif',
-  help: "I'll search Giphy for a gif matching your tags.",
-  aliases: ['giphy'],
-  timeout: 5,
-  level: 0,
-  fn: function (msg, suffix) {
+  name    : 'gif',
+  help    : "I'll search Giphy for a gif matching your tags.",
+  aliases : ['giphy'],
+  timeout : 5,
+  level   : 0,
+  fn      : function (msg, suffix) {
     var tags = suffix.split(' ');
     Giphy.get_gif(tags, function (id) {
       if (typeof id !== 'undefined') {
