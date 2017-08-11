@@ -149,7 +149,12 @@ Commands['news'] = {
   noDM    : true,
   timeout : 1,
   level   : 4,
-  fn      : function (msg, suffix) {
+  fn      : function (msg, suffix, bot) {
+
+    msg.channel.fetchMessages(1).then((result) => {
+      bot.Messages.deleteMessages(_.castArray(result.messages[0]));
+    });
+
     msg.channel.sendMessage('', false, JSON.parse(suffix));
   }
 };

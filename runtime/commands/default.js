@@ -64,8 +64,8 @@ Commands.purge = {
   usage: '<number>',
   aliases: ['prune'],
   noDM: true,
-  timeout: 30,
-  level: 0,
+  timeout: 1,
+  level: 4,
   fn: function (msg, suffix, bot) {
     var guildPerms = msg.author.permissionsFor(msg.guild)
     var botPerms = bot.User.permissionsFor(msg.guild)
