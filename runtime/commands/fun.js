@@ -256,6 +256,18 @@ Commands.price = {
           value : "```diff\n" + r.percent_change_1h + "%\n```"
         });
 
+        template.fields.push({
+          name   : "Rank",
+          value  : r.rank,
+          inline : true
+        });
+
+        template.fields.push({
+          name   : "Volume",
+          value  : numeral(r["24h_volume_usd"]).format("$0.00a"),
+          inline : true
+        });
+
         // console.log("template = ", JSON.stringify(template, null, 2));
 
         msg.channel.sendMessage('', false, template);
