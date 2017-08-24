@@ -170,9 +170,26 @@ Commands.price = {
   timeout: 5,
   level: 0,
   fn: function (msg, suffix) {
-    var tags = suffix.split(/\s+/),
-        fr   = '',
-        from = '';
+    var tags     = suffix.split(/\s+/),
+        fr       = '',
+        from     = '',
+        template = {
+          "title"       : "Full name of Coin",
+          "description" : "Symbol",
+          "color"       : 431042,
+          "thumbnail"   : {
+            "url" : "https://files.coinmarketcap.com/static/img/coins/32x32/"
+          },
+          "image" : {
+            "url" : ""
+          },
+          "author" : {
+            "name"     : "CoinMarketCap",
+            "url"      : "http://coinmarketcap.com",
+            "icon_url" : "https://apolloproject.io/images/ap18-logo.png"
+          },
+          "fields" : []
+        };
 
     if (typeof tags[0] === "undefined" || tags[0] === '') {
       msg.channel.sendMessage("Whoops, not a valid request.");
@@ -188,17 +205,60 @@ Commands.price = {
         var r = _.head(res.body),
             p = '';
 
+        // console.log("from = ", from);
+        template.title         = _.startCase(from);
+        template.thumbnail.url += from + ".png";
+        template.description   = fr;
+
         if (from !== "bitcoin") {
-          p = r.price_btc + " BTC";
+          template.fields.push({
+            name   : "Price USD",
+            value  : "$" + r.price_usd,
+            inline : true
+          });
+
+          template.fields.push({
+            name   : "Price BTC",
+            value  : r.price_btc + " BTC",
+            inline : true
+          })
+        } else {
+          template.fields.push({
+            name   : "Price USD",
+            value  : "$" + r.price_usd
+          });
         }
 
-        r = _.startCase(from) +
-            "\n$" + r.price_usd + "    " + p +
-            "\n     7D     /     1D     /    1H" +
-            "\n" + r.percent_change_7d  + "% / " + r.percent_change_24h + "% / " + r.percent_change_1h  + "%" +
-            "\nRank " + r.rank + "    Volume " + numeral(r["24h_volume_usd"]).format("$0.00a");
+        if (r.percent_change_7d.charAt(0) !== "-") {
+          r.percent_change_7d = "+" + r.percent_change_7d;
+        }
 
-        msg.channel.sendMessage(r);
+        if (r.percent_change_24h.charAt(0) !== "-") {
+          r.percent_change_24h = "+" + r.percent_change_24h;
+        }
+
+        if (r.percent_change_1h.charAt(0) !== "-") {
+          r.percent_change_1h = "+" + r.percent_change_1h;
+        }
+
+        template.fields.push({
+          name  : "Last 7 Days Change",
+          value : "```diff\n" + r.percent_change_7d + "%\n```"
+        });
+
+        template.fields.push({
+          name  : "Last Day Change",
+          value : "```diff\n" + r.percent_change_24h + "%\n```"
+        });
+
+        template.fields.push({
+          name  : "Last Hour Change",
+          value : "```diff\n" + r.percent_change_1h + "%\n```"
+        });
+
+        // console.log("template = ", JSON.stringify(template, null, 2));
+
+        msg.channel.sendMessage('', false, template);
 
       } else {
         Logger.error(`Got an error: ${err}, status code: ${res.status}`);
