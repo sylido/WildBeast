@@ -98,6 +98,71 @@ Commands.kuba = {
   }
 };
 
+Commands['ciber'] = {
+  name    : 'ciber',
+  help    : "I am currently drinking this !",
+  aliases : ['ciber', 'whatciberisdrinkingnow', 'whereintheworldisciber'],
+  noDM    : true,
+  timeout : 4,
+  level   : 0,
+  fn      : function (msg, suffix, bot) {
+
+    var keys        = ["strIngredient", "strMeasure"],
+        start       = 1,
+        end         = 15,
+        currI       = '',
+        currM       = '',
+        ingredients = {},
+        template    = {
+          "title"       : "Name Of Drink",
+          "description" : "description of drink",
+          "color"       : 431042,
+          "thumbnail"   : {
+            "url" : "https://cdn.discordapp.com/avatars/331598890250010625/08d18bb0b7f146adab10a4642cf9bf96.png"
+          },
+          "image" : {
+            "url" : ""
+          },
+          "author" : {
+            "name"     : "Ciber",
+            "url"      : "https://apolloproject.io/",
+            "icon_url" : "https://cdn.discordapp.com/avatars/331598890250010625/08d18bb0b7f146adab10a4642cf9bf96.png"
+          },
+          "fields" : []
+        };
+
+    // request.get('http://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=11118')
+    request.get('http://www.thecocktaildb.com/api/json/v1/1/random.php')
+    .end((err, res) => {
+      if (!err && res.status === 200) {
+        var r = _.head(_.get(res, "body.drinks")),
+            p = '';
+
+        // console.log(JSON.stringify(r, null, 2));
+
+        while (start <= end) {
+          currI = keys[0] + start;
+          currM = keys[1] + start;
+
+          if (r[currI] !== '') {
+            template.fields.push({ name : r[currI], value : r[currM] });
+          }
+
+          start++;
+        }
+
+        template.title       = r.strDrink;
+        template.description = r.strInstructions;
+        template.image.url   = r.strDrinkThumb;
+
+        msg.channel.sendMessage('', false, template);
+      } else {
+        Logger.error(`Got an error: ${err}, status code: ${res.status}`);
+      }
+    });
+  }
+};
+
 Commands.price = {
   name: 'price',
   help: "Current price from coinmarketcap.com !",
@@ -139,6 +204,7 @@ Commands.price = {
         Logger.error(`Got an error: ${err}, status code: ${res.status}`);
       }
     });
+
   }
 };
 
