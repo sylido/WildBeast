@@ -131,8 +131,8 @@ Commands['ciber'] = {
           "fields" : []
         };
 
-    // request.get('http://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=11118')
-    request.get('http://www.thecocktaildb.com/api/json/v1/1/random.php')
+    // request.get('http://www.thecocktaildb.com/api/json/v1/5024/lookup.php?i=11118')
+    request.get('http://www.thecocktaildb.com/api/json/v1/5024/random.php')
     .end((err, res) => {
       if (!err && res.status === 200) {
         var r = _.head(_.get(res, "body.drinks")),
